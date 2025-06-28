@@ -30,6 +30,8 @@ export const CastleVersionsSchema = sqliteTable('castle_versions', {
     .$type<string[]>()
     .default(sql`'[]'`),
   description: text('description').notNull(),
+  latitude: real('latitude').notNull(),
+  longitude: real('longitude').notNull(),
   editor_user_id: uuid('editor_user_id'),
   created_at: createdAt(),
 });

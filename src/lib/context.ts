@@ -1,6 +1,5 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { getDb } from "./db";
-import { Env } from "..";
 
 type Options = FetchCreateContextFnOptions & {
   env: Env;
@@ -12,3 +11,4 @@ export async function createContext({ env }: Options) {
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Database = Context["db"];
