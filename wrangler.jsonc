@@ -10,7 +10,7 @@
         {
             "binding": "DB",
             "database_name": "castles",
-            "database_id": "a20f1a3d-763a-42c2-b61e-7bce87c8b072",
+            "database_id": "86672e42-3ad1-4d69-b63f-2bd5f2e518b5",
             "migrations_dir": "drizzle/migrations"
         }
     ]
