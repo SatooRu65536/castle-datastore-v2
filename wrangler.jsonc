@@ -1,0 +1,17 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "castle-datastore",
+    "main": "./src/index.ts",
+    "compatibility_date": "2025-06-01",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "castles",
+            "database_id": "a20f1a3d-763a-42c2-b61e-7bce87c8b072",
+            "migrations_dir": "drizzle/migrations"
+        }
+    ]
+}
