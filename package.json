@@ -1,5 +1,5 @@
 {
-  "name": "castle-datastore-v2-site",
+  "name": "castle-datastore-v2-api",
   "scripts": {
     "dev": "wrangler dev",
     "gen-types": "wrangler types",
