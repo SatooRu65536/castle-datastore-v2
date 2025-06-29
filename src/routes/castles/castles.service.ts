@@ -12,33 +12,31 @@ export const castlesService = {
    * @param {CreateCastle DTO} input
    * @returns {Castle} 作成された城の情報
    */
-  addCastle: async (db: Database, input: CreateCastle): Promise<Castle> => {
+  add: async (db: Database, input: CreateCastle): Promise<Castle> => {
     const castleId = v4();
 
-    const castle = await db.transaction(async (tx) => {
-      const castleVersions = await tx
-        .insert(CastleVersionsSchema)
-        .values({
-          castle_id: castleId,
-          name: input.name,
-          aka: input.aka,
-          description: input.description,
-          latitude: input.latitude,
-          longitude: input.longitude,
-          editor_user_id: v4(), // TODO
-        })
-        .returning();
+    const castleVersions = await db
+      .insert(CastleVersionsSchema)
+      .values({
+        castle_id: castleId,
+        name: input.name,
+        aka: input.aka,
+        description: input.description,
+        latitude: input.latitude,
+        longitude: input.longitude,
+        editor_user_id: v4(), // TODO
+      })
+      .returning();
 
-      if (castleVersions.length !== 1) {
-        throw new Error('Failed to create castle version');
-      }
+    const castle = castleVersions[0];
 
-      await tx.insert(CastlesSchema).values({
-        id: castleId,
-        latest_version_id: castleVersions[0].id,
-      });
+    if (castle == undefined) {
+      throw new Error('Failed to create castle version');
+    }
 
-      return castleVersions[0];
+    await db.insert(CastlesSchema).values({
+      id: castleId,
+      latest_version_id: castle.id,
     });
 
     return castlesService.toCastle(castle);

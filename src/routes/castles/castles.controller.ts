@@ -1,9 +1,10 @@
 import { publicProcedure, router } from '../../trpc';
-import { createCastle } from './castles.dto';
+import { castle, createCastle } from './castles.dto';
 import { castlesService } from './castles.service';
 
 export const castlesRouter = router({
-  addCastle: publicProcedure
+  add: publicProcedure
     .input(createCastle)
-    .mutation(async ({ ctx, input }) => await castlesService.addCastle(ctx.db, input)),
+    .output(castle)
+    .mutation(async ({ ctx, input }) => await castlesService.add(ctx.db, input)),
 });
