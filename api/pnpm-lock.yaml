@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@trpc/server':
-        specifier: ^11.4.2
+        specifier: 11.4.2
         version: 11.4.2(typescript@5.8.3)
       drizzle-orm:
         specifier: ^0.44.2
@@ -31,7 +31,7 @@ importers:
         specifier: ^4.20250620.0
         version: 4.20250620.0
       '@trpc/client':
-        specifier: ^11.4.2
+        specifier: 11.4.2
         version: 11.4.2(@trpc/server@11.4.2(typescript@5.8.3))(typescript@5.8.3)
       '@types/is-uuid':
         specifier: ^1.0.2
