@@ -3,23 +3,23 @@
 import { mapModeAtom } from '@/stores/mapMode';
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
-import { ArrowDown } from '@/components/icons';
 import styles from './Map.module.scss';
-import { usePathname } from 'next/navigation';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { mapSettingsAtom } from '@/stores/mapSettints';
 import { useEditCastle } from '@/hooks/useEditCastle';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN } from '@/consts/map';
+import { MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN } from '@/consts/map';
 import { useSetBounds } from '@/hooks/useBounds';
 import { castlesAtom } from '@/stores/castles';
 import Markers from './Markers';
 import EditMarker from './EditMarker';
 
 export default function CastleMap() {
+  const mapSettings = useAtomValue(mapSettingsAtom);
+
   return (
     <MapContainer
-      center={DEFAULT_CENTER}
-      zoom={DEFAULT_ZOOM}
+      center={mapSettings.center}
+      zoom={mapSettings.zoom}
       minZoom={ZOOM_MIN}
       maxZoom={ZOOM_MAX}
       maxBounds={MAX_BOUNDS}
@@ -28,7 +28,6 @@ export default function CastleMap() {
       zoomControl={false}
       className={styles.map_container}
     >
-      <MoveDown />
       <CastleMarkers />
       <InnerMapContainer />
       <TileLayer
@@ -66,15 +65,15 @@ function InnerMapContainer() {
   useMapEvents({
     moveend: (e) => {
       setBounds(e.target.getBounds());
-      setMapSettings((prev) => ({ ...prev, center: e.target.getCenter() }));
+      setMapSettings({ center: e.target.getCenter() });
     },
     zoomend: (e) => {
       setBounds(e.target.getBounds());
-      setMapSettings((prev) => ({ ...prev, zoom: e.target.getZoom() }));
+      setMapSettings({ zoom: e.target.getZoom() });
     },
     layeradd: (e) => {
       setBounds(e.target.getBounds());
-      setMapSettings((prev) => ({ ...prev, zoom: e.target.getZoom() }));
+      setMapSettings({ zoom: e.target.getZoom() });
     },
     dblclick: (e) => {
       if (mode !== 'edit') return;
@@ -83,21 +82,4 @@ function InnerMapContainer() {
   });
 
   return <div />;
-}
-
-function MoveDown() {
-  const path = usePathname();
-  const isHide = ['/map', '/'].includes(path);
-
-  function moveDown() {
-    if (window === undefined) return;
-
-    const y = window.scrollY + window.innerHeight * 0.5;
-    window.scrollTo({
-      top: y,
-      behavior: 'smooth',
-    });
-  }
-
-  return <ArrowDown className={`${styles.move_down} ${isHide && styles.hide}`} onClick={moveDown} />;
 }

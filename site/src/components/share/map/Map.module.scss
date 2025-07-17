@@ -18,24 +18,3 @@
   height: 100%;
   width: 100%;
 }
-
-.move_down {
-  padding: 5px;
-  color: white;
-  background-color: var(--primary);
-  border-radius: 8px;
-  font-size: 2rem;
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 1000;
-  cursor: pointer;
-
-  @media (min-width: 700px) {
-    display: none;
-  }
-
-  &.hide {
-    display: none;
-  }
-}
