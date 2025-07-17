@@ -1,0 +1,7 @@
+.about {
+  grid-column: 1 / -1;
+
+  & > div {
+    padding-left: 0.5rem;
+  }
+}

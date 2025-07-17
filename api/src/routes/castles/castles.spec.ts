@@ -91,18 +91,28 @@ describe('castlesRouter', () => {
   it('[正常系] list', async () => {
     const castles = await client.castles.list.query({
       maxResults: 10,
-      minLatitude: 30,
-      maxLatitude: 40,
-      minLongitude: 130,
-      maxLongitude: 140,
+      minLatitude: 0,
+      maxLatitude: 90,
+      minLongitude: 90,
+      maxLongitude: 180,
       minScale: 0,
     });
     expect(castles).toBeInstanceOf(Array);
+    expect(castles.length).toBeGreaterThan(0);
     castles.forEach((castle) => {
       expect(castle).toHaveProperty('castleId');
       expect(castle).toHaveProperty('name');
       expect(castle).toHaveProperty('latitude');
       expect(castle).toHaveProperty('longitude');
     });
+  });
+
+  it('[正常系] info', async () => {
+    const info = await client.castles.info.query();
+
+    expect(info).toHaveProperty('num');
+    expect(info).toHaveProperty('updatedAt');
+    expect(typeof info.num).toBe('number');
+    expect(info.updatedAt).toBeInstanceOf(Date);
   });
 });

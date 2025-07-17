@@ -23,4 +23,6 @@ export const castlesRouter = router({
     .input(listCastleOptions)
     .output(array(castle))
     .query(async ({ ctx, input }) => await castlesService.list(ctx.db, input)),
+  info: publicProcedure
+    .query(async ({ ctx }) => await castlesService.info(ctx.db)),
 });

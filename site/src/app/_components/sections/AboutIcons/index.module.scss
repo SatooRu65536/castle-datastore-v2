@@ -1,0 +1,27 @@
+.about_icon {
+  grid-column: span 6;
+  grid-row: span 1;
+
+  @media (max-width: 700px) {
+    grid-column: span 12;
+  }
+
+  .box {
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    .icon_box {
+      width: 200px;
+      text-align: center;
+
+      img {
+        width: 100px;
+      }
+
+      p {
+        text-align: center;
+      }
+    }
+  }
+}

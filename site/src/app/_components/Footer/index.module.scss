@@ -1,0 +1,11 @@
+.footer {
+  height: var(--footer-height);
+  background-color: var(--primary-light);
+  font-size: 0.9rem;
+  line-height: var(--footer-height);
+  text-align: center;
+}
+
+.hide {
+  display: none;
+}

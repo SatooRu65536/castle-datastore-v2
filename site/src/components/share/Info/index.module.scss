@@ -1,0 +1,15 @@
+.info {
+  margin: 24px 0px;
+  padding: 16px;
+  background: var(--warn-bg);
+  align-items: flex-start;
+  border-radius: 8px;
+  display: flex;
+  white-space: pre-wrap;
+
+  .icon {
+    margin-right: 8px;
+    font-size: 1.5em;
+    color: var(--warn);
+  }
+}

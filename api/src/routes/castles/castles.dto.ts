@@ -53,3 +53,8 @@ export const listCastleOptions = object({
   minScale: defaulted(number(), 0),
 });
 export type ListCastleOptions = Infer<typeof listCastleOptions>;
+
+export type CastleInfo = {
+  num: number;
+  updatedAt: Date;
+};

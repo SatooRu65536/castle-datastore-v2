@@ -1,8 +1,8 @@
-import { and, desc, eq, gte, InferSelectModel, lte } from 'drizzle-orm';
+import { and, count, desc, eq, gte, InferSelectModel, lte, max } from 'drizzle-orm';
 import { CastlesSchema, CastleVersionsSchema, TagSchema } from '../../../drizzle/schema';
 import { Uuid } from '../../index.dto';
 import { Database } from '../../lib/context';
-import { Castle, AddCastle, GetCastle, ListCastleOptions, UpdateCastle } from './castles.dto';
+import { Castle, AddCastle, GetCastle, ListCastleOptions, UpdateCastle, CastleInfo } from './castles.dto';
 import { v4 } from 'uuid';
 import { TRPCError } from '@trpc/server';
 
@@ -106,6 +106,14 @@ export const castlesService = {
       });
     }
 
+    await db
+      .update(CastleVersionsSchema)
+      .set({ deleted: true })
+      .where(eq(CastleVersionsSchema.castleId, castle.castleId));
+    await db.update(CastlesSchema).set({
+      latestVersionId: updatedCastle.id,
+    });
+
     await db.update(CastlesSchema).set({
       latestVersionId: updatedCastle.id,
     });
@@ -128,7 +136,6 @@ export const castlesService = {
       });
     }
 
-    // 論理削除のため、deleted フラグを立てる
     const res = await db
       .insert(CastleVersionsSchema)
       .values({
@@ -183,8 +190,43 @@ export const castlesService = {
       )
       .orderBy(desc(CastleVersionsSchema.scale))
       .limit(options.maxResults);
+    console.log(res);
 
     return res.map((d) => castlesService.toCastle(d.castle_versions));
+  },
+
+  /**
+   * 城のタグ情報を取得する
+   * @param db
+   */
+  info: async (db: Database): Promise<CastleInfo> => {
+    console.log(
+      await db
+        .select()
+        .from(CastlesSchema)
+        .innerJoin(CastleVersionsSchema, eq(CastlesSchema.latestVersionId, CastleVersionsSchema.id))
+        .orderBy(desc(CastleVersionsSchema.scale)),
+    );
+    const res = await db
+      .select({ num: count(CastlesSchema.id), updatedAt: max(CastleVersionsSchema.createdAt) })
+      .from(CastlesSchema)
+      .innerJoin(CastleVersionsSchema, eq(CastlesSchema.latestVersionId, CastleVersionsSchema.id))
+      .where(eq(CastleVersionsSchema.deleted, false));
+    const info = res.at(0);
+    const num = info?.num;
+    const updatedAt = info?.updatedAt;
+
+    if (num && updatedAt) {
+      return {
+        num,
+        updatedAt,
+      };
+    }
+
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'No castles found',
+    });
   },
 
   /**
