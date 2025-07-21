@@ -6,5 +6,12 @@ import markerCastleRed from '@/assets/markers/castle-red.png';
 import markerCastleEdit from '@/assets/markers/castle-edit.png';
 import markerStar from '@/assets/markers/star.png';
 
-export const MARKERS = [markerStar, markerCastleGreen, markerCastleBlue, markerCastleRed, markerCastleBlack] as const;
+export const MARKERS = [
+  markerStar,
+  markerStar,
+  markerCastleGreen,
+  markerCastleBlue,
+  markerCastleRed,
+  markerCastleBlack,
+] as const;
 export const MARKER_SELECT = markerCastleEdit;

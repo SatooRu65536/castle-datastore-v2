@@ -1,0 +1,16 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/api/seed/data/tags.json"
+      ],
+      "url": "/api/seed/schema/tags.json"
+    },
+    {
+      "fileMatch": [
+        "/api/seed/data/structures.json"
+      ],
+      "url": "/api/seed/schema/structures.json"
+    }
+  ]
+}

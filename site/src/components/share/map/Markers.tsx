@@ -20,7 +20,7 @@ interface Props {
 function Markers({ data, edit }: Props) {
   const mode = useAtomValue(mapModeAtom);
   const markerIcon = icon({
-    iconUrl: MARKERS[data.scale - 1].src ?? MARKERS[0].src,
+    iconUrl: MARKERS.at(data.scale - 1)?.src ?? MARKERS[0].src,
     iconSize: [40, 40],
     iconAnchor: [20, 20],
     popupAnchor: [0, -40],

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["name"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "建造物の名称"
+      },
+      "description": {
+        "type": "string",
+        "description": "建造物の説明（任意）"
+      }
+    },
+    "additionalProperties": false
+  }
+}
