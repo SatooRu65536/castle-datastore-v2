@@ -9,7 +9,7 @@ export default function Footer() {
 
   return (
     <footer className={isHide ? styles.hide : styles.footer}>
-      <p>SatooRu © 2023 Copyright.</p>
+      <p>SatooRu © 2025 Copyright.</p>
     </footer>
   );
 }

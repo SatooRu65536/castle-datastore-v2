@@ -1,4 +1,6 @@
 .edit_info {
+  height: calc(100vh - 40px - var(--header-height));
+  overflow-y: scroll;
   grid-column: span 4;
   display: flex;
   align-items: center;
