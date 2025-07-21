@@ -4,6 +4,8 @@ import Button from '@/components/share/Button';
 import Input from '@/components/share/Input';
 import { useEditCastle } from '@/hooks/useEditCastle';
 import styles from './index.module.scss';
+import TextArea from '@/components/share/TextArea';
+import TagSelector from './TagSelector';
 
 export default function EditInfo() {
   const { isNew, editingCastle, setEditingCastle, cancel, remove, submit } = useEditCastle();
@@ -45,6 +47,20 @@ export default function EditInfo() {
               />
             </p>
             <p className={styles.desc}>マーカーを移動させても変更できます。</p>
+          </div>
+
+          <div className={styles.box}>
+            <h3>タグ</h3>
+            <TagSelector onChange={(vs) => setEditingCastle({ tags: vs.map((v) => v.label) })} />
+          </div>
+
+          <div className={styles.box}>
+            <h3>説明</h3>
+            <TextArea
+              placeholder="説明"
+              value={editingCastle.description}
+              onChange={(e) => setEditingCastle({ description: e.target.value })}
+            />
           </div>
 
           <div className={styles.button_box}>
