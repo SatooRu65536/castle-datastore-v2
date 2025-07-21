@@ -6,7 +6,8 @@
     "generate": "drizzle-kit generate --name",
     "migrate": "wrangler d1 migrations apply castles",
     "test": "vitest run",
-    "seed": "jiti ./seed/index.ts"
+    "seed": "jiti ./seed/index.ts",
+    "deploy:cf": "wrangler deploy"
   },
   "dependencies": {
     "@trpc/server": "11.4.2",

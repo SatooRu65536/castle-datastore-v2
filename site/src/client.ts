@@ -5,7 +5,7 @@ import superjson from 'superjson';
 export const client = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: 'http://localhost:8787/trpc',
+      url: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8787/trpc',
       transformer: superjson,
     }),
   ],
