@@ -6,9 +6,19 @@ import { useEditCastle } from '@/hooks/useEditCastle';
 import styles from './index.module.scss';
 import TextArea from '@/components/share/TextArea';
 import TagSelector from './TagSelector';
+import StructureSelector from './StructureSelector';
+import { StructuresStatus } from '@/types/structures';
+
+const statuses = [
+  StructuresStatus.Existing,
+  StructuresStatus.Ruined,
+  StructuresStatus.Restoration,
+  StructuresStatus.Reconstruction,
+  StructuresStatus.Unknown,
+] as const;
 
 export default function EditInfo() {
-  const { isNew, editingCastle, setEditingCastle, cancel, remove, submit } = useEditCastle();
+  const { isNew, editingCastle, structures, setEditingCastle, setStructures, cancel, remove, submit } = useEditCastle();
 
   return (
     <div className={styles.edit_info}>
@@ -51,8 +61,15 @@ export default function EditInfo() {
 
           <div className={styles.box}>
             <h3>タグ</h3>
-            <TagSelector onChange={(vs) => setEditingCastle({ tags: vs.map((v) => v.label) })} />
+            <TagSelector values={editingCastle.tags} onChange={(tags) => setEditingCastle({ tags: [...tags] })} />
           </div>
+
+          {statuses.map((status) => (
+            <div className={styles.box} key={status}>
+              <h3>構造物({status})</h3>
+              <StructureSelector values={structures[status]} onChange={(s) => setStructures(s, status)} />
+            </div>
+          ))}
 
           <div className={styles.box}>
             <h3>説明</h3>

@@ -6,7 +6,6 @@ export const tag = object({
   name: string(),
   description: nullable(string()),
 });
-
 export type Tag = Infer<typeof tag>;
 
 export const addTag = omit(tag, ['id']);

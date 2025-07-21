@@ -1,10 +1,11 @@
 import { client } from '@/client';
 import { atom, useAtom } from 'jotai';
 import { useCallback } from 'react';
-import { AddCastle, Castle } from '~api/routes/castles/castles.dto';
+import type { AddCastle, Castle } from '~api/routes/castles/castles.dto';
 import { Uuid } from '~api/index.dto';
 import { LatLng } from 'leaflet';
 import { useCastlesRefresh } from './useCastles';
+import { StructuresStatus } from '@/types/structures';
 
 const editCastleAtom = atom<AddCastle>();
 const editCastleIdAtom = atom<Uuid>();
@@ -20,6 +21,22 @@ export function useEditCastle() {
       setEditingCastle_((prev) => {
         if (!prev) return prev;
         return { ...prev, ...props };
+      });
+    },
+    [setEditingCastle_],
+  );
+
+  // 現存の構造物
+  const setStructures = useCallback(
+    (structs: string[], status: StructuresStatus) => {
+      setEditingCastle_((prev) => {
+        if (!prev) return prev;
+
+        const structures = prev.structures;
+        const filteredStructures = structures.filter((s) => s.status !== status);
+
+        const targetStructures = structs.map((s) => ({ name: s, status }));
+        return { ...prev, structures: [...filteredStructures, ...targetStructures] };
       });
     },
     [setEditingCastle_],
@@ -76,11 +93,30 @@ export function useEditCastle() {
     await client.castles.delete.mutate({ castleId: editingCastleId });
   };
 
+  const existingStructures = editingCastle?.structures?.filter((s) => s.status === StructuresStatus.Existing) ?? [];
+  const ruinedStructures = editingCastle?.structures?.filter((s) => s.status === StructuresStatus.Ruined) ?? [];
+  const restorationStructures =
+    editingCastle?.structures?.filter((s) => s.status === StructuresStatus.Restoration) ?? [];
+  const reconstructionStructures =
+    editingCastle?.structures?.filter((s) => s.status === StructuresStatus.Reconstruction) ?? [];
+  const unknownStructures = editingCastle?.structures?.filter((s) => s.status === StructuresStatus.Unknown) ?? [];
+
+  // キーをStructuresStatusに基づいて構造体をマッピング
+  const structures: Record<StructuresStatus, string[]> = {
+    [StructuresStatus.Existing]: existingStructures.map((s) => s.name),
+    [StructuresStatus.Ruined]: ruinedStructures.map((s) => s.name),
+    [StructuresStatus.Restoration]: restorationStructures.map((s) => s.name),
+    [StructuresStatus.Reconstruction]: reconstructionStructures.map((s) => s.name),
+    [StructuresStatus.Unknown]: unknownStructures.map((s) => s.name),
+  };
+
   return {
     isNew,
     editingCastle,
     editingCastleId,
+    structures,
     setEditingCastle,
+    setStructures,
     add,
     edit,
     submit,

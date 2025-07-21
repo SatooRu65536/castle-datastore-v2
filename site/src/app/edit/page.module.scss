@@ -5,7 +5,7 @@
 
   .map {
     grid-column: span 8;
-    height: calc(100vh - 40px - var(--header-height));
+    // height: calc(100vh - 40px - var(--header-height));
 
     @media (width < 700px) {
       grid-column: span 12;

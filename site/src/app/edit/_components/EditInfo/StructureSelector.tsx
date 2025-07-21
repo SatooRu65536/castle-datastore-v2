@@ -1,8 +1,8 @@
 'use client';
 
-import { useTags } from '@/hooks/useTags';
 import Select from 'react-select';
 import styles from './Selector.module.scss';
+import { useStructures } from '@/hooks/useStructures';
 
 interface Props {
   values: string[];
@@ -10,9 +10,12 @@ interface Props {
 }
 
 export default function StructureSelector({ values, onChange }: Props) {
-  const { tags } = useTags();
+  const { structures } = useStructures();
 
-  const options = tags?.map((tag) => ({ value: tag.name, label: tag.name }));
+  const options = structures?.map((structure) => ({
+    value: structure.name,
+    label: structure.name,
+  }));
 
   return (
     <Select
@@ -20,7 +23,7 @@ export default function StructureSelector({ values, onChange }: Props) {
       defaultValue={values.map((v) => ({ value: v, label: v }))}
       isMulti
       options={options}
-      onChange={(v) => onChange(v.map((o) => o.value))}
+      onChange={(s) => onChange(s.map((o) => o.value))}
     />
   );
 }

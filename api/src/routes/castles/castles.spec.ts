@@ -73,7 +73,6 @@ describe('castlesRouter', () => {
     };
 
     const updatedCastleRes = await client.castles.update.mutate(updatedCastle);
-    console.log('updatedCastleRes', updatedCastleRes?.castleId);
 
     const res = await client.castles.get.query({ castleId: updatedCastleRes?.castleId });
     expect(res.name).toBe('Updated Castle');
