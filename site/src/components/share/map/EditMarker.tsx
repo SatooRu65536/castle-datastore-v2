@@ -3,35 +3,31 @@
 import { LatLng, LeafletEventHandlerFnMap, icon } from 'leaflet';
 import { Marker, Popup } from 'react-leaflet';
 import styles from './Markers.module.scss';
-import markerEdit from '@/assets/markers/castle-edit.png';
-import { useEditCastle } from '@/hooks/useEditCastle';
+import { UseEditCastle } from '@/hooks/useEditCastle';
 import { AddCastle } from '~api/routes/castles/castles.dto';
+import { MARKER_SELECT } from '@/consts/markers';
 
 interface Props {
   castle: AddCastle | undefined;
+  setEditingCastle: UseEditCastle['setEditingCastle'];
 }
 
-export default function EditMarker({ castle }: Props) {
-  const { setEditCastle } = useEditCastle();
+export default function EditMarker({ castle, setEditingCastle }: Props) {
   const markerIcon = icon({
-    iconUrl: markerEdit.src,
+    iconUrl: MARKER_SELECT.src,
     iconSize: [40, 40],
     iconAnchor: [20, 20],
     popupAnchor: [0, -40],
   });
 
   const eventHandlers: LeafletEventHandlerFnMap = {
-    dragend: (e) =>
-      setEditCastle((prev) => {
-        if (!prev) return prev;
-
-        const latlng = e.target.getLatLng() as LatLng;
-        return {
-          ...prev,
-          latitude: latlng.lat,
-          longitude: latlng.lng,
-        };
-      }),
+    dragend: (e) => {
+      const latlng = e.target.getLatLng() as LatLng;
+      setEditingCastle({
+        latitude: latlng.lat,
+        longitude: latlng.lng,
+      });
+    },
   };
 
   if (!castle) return <></>;

@@ -1,0 +1,28 @@
+.button {
+  margin-inline: 5px;
+  padding: 5px 12px;
+  color: var(--background);
+  background-color: var(--primary);
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all var(--transition-time);
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &.outline {
+    color: var(--primary);
+    background-color: var(--background);
+    border: 1px solid var(--primary);
+  }
+
+  &.danger {
+    color: var(--background);
+    background-color: var(--danger);
+  }
+}

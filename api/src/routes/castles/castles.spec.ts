@@ -1,32 +1,32 @@
 import { TRPCClientError } from '@trpc/client';
 import { client } from '../../client';
 import { Uuid } from '../../index.dto';
-import { Castle, AddCastle, StructuresStatus } from './castles.dto';
+import { Castle, AddCastle, StructuresStatus, UpdateCastle } from './castles.dto';
 import { v4 } from 'uuid';
+
+const castle: AddCastle = {
+  name: 'E2Eテスト城',
+  aka: ['別名1', '別名2'],
+  description: 'これはE2Eテスト用の城です。',
+  latitude: 35.6895,
+  longitude: 139.6917,
+  structures: [
+    {
+      name: '天守閣',
+      status: StructuresStatus.Restoration,
+    },
+    {
+      name: '石垣',
+      status: StructuresStatus.Existing,
+    },
+  ],
+  tags: ['日本百名城', '国指定史跡'],
+};
 
 describe('castlesRouter', () => {
   let createdCastle: Castle;
 
   it('[正常系] add', async () => {
-    const castle: AddCastle = {
-      name: 'E2Eテスト城',
-      aka: ['別名1', '別名2'],
-      description: 'これはE2Eテスト用の城です。',
-      latitude: 35.6895,
-      longitude: 139.6917,
-      structures: [
-        {
-          name: '天守閣',
-          status: StructuresStatus.Restoration,
-        },
-        {
-          name: '石垣',
-          status: StructuresStatus.Existing,
-        },
-      ],
-      tags: ['日本百名城', '国指定史跡'],
-    };
-
     createdCastle = await client.castles.add.mutate(castle);
     expect(createdCastle).toMatchObject(castle);
   });
@@ -58,6 +58,25 @@ describe('castlesRouter', () => {
         throw err;
       }
     }
+  });
+
+  it('[正常系] update', async () => {
+    const updatedCastle: UpdateCastle = {
+      castleId: createdCastle.castleId,
+      latitude: createdCastle.latitude,
+      longitude: createdCastle.longitude,
+      structures: createdCastle.structures,
+      tags: createdCastle.tags,
+      name: 'Updated Castle',
+      aka: ['Updated Alias'],
+      description: '更新!',
+    };
+
+    const updatedCastleRes = await client.castles.update.mutate(updatedCastle);
+    console.log('updatedCastleRes', updatedCastleRes?.castleId);
+
+    const res = await client.castles.get.query({ castleId: updatedCastleRes?.castleId });
+    expect(res.name).toBe('Updated Castle');
   });
 
   it('[正常系] delete', async () => {

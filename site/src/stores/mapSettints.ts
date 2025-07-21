@@ -1,10 +1,9 @@
 import { DEFAULT_CENTER, DEFAULT_ZOOM } from '@/consts/map';
 import { getLocalStorage, setLocalStorage } from '@/utils/storage';
 import { atom } from 'jotai';
-import { LatLng } from 'leaflet';
 
 interface MapSettings {
-  center: LatLng;
+  center: [number, number];
   zoom: number;
 }
 
@@ -26,4 +25,4 @@ export const mapSettingsAtom = atom(
     set(mapSettingsAtom_, updatedSettings);
     setLocalStorage('mapSettings', updatedSettings);
   },
-)
+);

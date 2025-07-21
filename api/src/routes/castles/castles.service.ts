@@ -82,7 +82,14 @@ export const castlesService = {
   update: async (db: Database, castle: UpdateCastle): Promise<Castle> => {
     await castlesService.get(db, { castleId: castle.castleId }); // 存在確認
 
-    const res = await db
+    // 既存のバージョンを削除
+    await db
+      .update(CastleVersionsSchema)
+      .set({ deleted: true })
+      .where(eq(CastleVersionsSchema.castleId, castle.castleId));
+
+    // 新しいバージョンを追加
+    const updatedVersionRes = await db
       .insert(CastleVersionsSchema)
       .values({
         castleId: castle.castleId,
@@ -98,27 +105,20 @@ export const castlesService = {
       })
       .returning();
 
-    const updatedCastle = res[0];
-    if (!updatedCastle) {
+    const updatedVersion = updatedVersionRes[0];
+    if (!updatedVersion) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Failed to update castle version',
       });
     }
 
-    await db
-      .update(CastleVersionsSchema)
-      .set({ deleted: true })
-      .where(eq(CastleVersionsSchema.castleId, castle.castleId));
+    // 紐付けを更新
     await db.update(CastlesSchema).set({
-      latestVersionId: updatedCastle.id,
+      latestVersionId: updatedVersion.id,
     });
 
-    await db.update(CastlesSchema).set({
-      latestVersionId: updatedCastle.id,
-    });
-
-    return castlesService.toCastle(updatedCastle);
+    return castlesService.toCastle(updatedVersion);
   },
 
   /**
@@ -190,7 +190,6 @@ export const castlesService = {
       )
       .orderBy(desc(CastleVersionsSchema.scale))
       .limit(options.maxResults);
-    console.log(res);
 
     return res.map((d) => castlesService.toCastle(d.castle_versions));
   },
@@ -200,13 +199,6 @@ export const castlesService = {
    * @param db
    */
   info: async (db: Database): Promise<CastleInfo> => {
-    console.log(
-      await db
-        .select()
-        .from(CastlesSchema)
-        .innerJoin(CastleVersionsSchema, eq(CastlesSchema.latestVersionId, CastleVersionsSchema.id))
-        .orderBy(desc(CastleVersionsSchema.scale)),
-    );
     const res = await db
       .select({ num: count(CastlesSchema.id), updatedAt: max(CastleVersionsSchema.createdAt) })
       .from(CastlesSchema)
@@ -223,10 +215,10 @@ export const castlesService = {
       };
     }
 
-    throw new TRPCError({
-      code: 'INTERNAL_SERVER_ERROR',
-      message: 'No castles found',
-    });
+    return {
+      num: 0,
+      updatedAt: new Date('2025-04-06'),
+    };
   },
 
   /**
@@ -253,6 +245,6 @@ export const castlesService = {
    * @returns {number} スケール値 (0~5)
    */
   calcScale: (castle: AddCastle): number => {
-    return 0;
+    return 5;
   },
 };

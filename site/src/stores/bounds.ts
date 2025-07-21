@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-interface Bounds {
+export interface Bounds {
   south: number;
   west: number;
   north: number;

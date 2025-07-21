@@ -7,11 +7,12 @@ import styles from './Map.module.scss';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { mapSettingsAtom } from '@/stores/mapSettints';
 import { useEditCastle } from '@/hooks/useEditCastle';
-import { MAX_BOUNDS, ZOOM_MAX, ZOOM_MIN } from '@/consts/map';
+import { MAX_BOUND_NE, MAX_BOUND_SW, ZOOM_MAX, ZOOM_MIN } from '@/consts/map';
 import { useSetBounds } from '@/hooks/useBounds';
-import { castlesAtom } from '@/stores/castles';
 import Markers from './Markers';
 import EditMarker from './EditMarker';
+import { useCastles } from '@/hooks/useCastles';
+import { LatLngBounds } from 'leaflet';
 
 export default function CastleMap() {
   const mapSettings = useAtomValue(mapSettingsAtom);
@@ -22,13 +23,14 @@ export default function CastleMap() {
       zoom={mapSettings.zoom}
       minZoom={ZOOM_MIN}
       maxZoom={ZOOM_MAX}
-      maxBounds={MAX_BOUNDS}
+      maxBounds={new LatLngBounds(MAX_BOUND_SW, MAX_BOUND_NE)}
       scrollWheelZoom
       doubleClickZoom={false}
       zoomControl={false}
       className={styles.map_container}
     >
       <CastleMarkers />
+      <EditcastleMarker />
       <InnerMapContainer />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -39,21 +41,28 @@ export default function CastleMap() {
 }
 
 function CastleMarkers() {
-  const castles = useAtomValue(castlesAtom);
-  const { editCastle, editCastleId } = useEditCastle();
+  const { castles, isLoading } = useCastles();
+  const { editingCastleId, edit } = useEditCastle();
 
-  if (castles.state !== 'hasData') return <></>;
+  if (isLoading) return <></>;
 
-  const nonSelectedCastles = castles.data.filter((c) => c.castleId !== editCastleId);
+  const nonSelectedCastles = castles?.filter((c) => c.castleId !== editingCastleId);
 
   return (
     <>
-      {nonSelectedCastles.map((c) => (
-        <Markers key={c.castleId} data={c} isEdited={false} />
+      {nonSelectedCastles?.map((c) => (
+        <Markers key={c.castleId} data={c} isEdited={false} edit={edit} />
       ))}
-      {editCastle !== null && <EditMarker castle={editCastle} />}
     </>
   );
+}
+
+function EditcastleMarker() {
+  const { editingCastle, setEditingCastle } = useEditCastle();
+
+  if (!editingCastle) return <></>;
+
+  return <EditMarker castle={editingCastle} setEditingCastle={setEditingCastle} />;
 }
 
 function InnerMapContainer() {

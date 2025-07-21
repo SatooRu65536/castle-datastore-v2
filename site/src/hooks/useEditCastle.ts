@@ -4,17 +4,30 @@ import { useCallback } from 'react';
 import { AddCastle, Castle } from '~api/routes/castles/castles.dto';
 import { Uuid } from '~api/index.dto';
 import { LatLng } from 'leaflet';
+import { useCastlesRefresh } from './useCastles';
 
 const editCastleAtom = atom<AddCastle>();
 const editCastleIdAtom = atom<Uuid>();
 
 export function useEditCastle() {
-  const [editCastle, setEditCastle] = useAtom(editCastleAtom);
-  const [editCastleId, setEditCastleId] = useAtom(editCastleIdAtom);
+  const [editingCastle, setEditingCastle_] = useAtom(editCastleAtom);
+  const [editingCastleId, setEditingCastleId] = useAtom(editCastleIdAtom);
+  const refresh = useCastlesRefresh();
+  const isNew = editingCastleId === undefined;
+
+  const setEditingCastle = useCallback(
+    (props: Partial<AddCastle>) => {
+      setEditingCastle_((prev) => {
+        if (!prev) return prev;
+        return { ...prev, ...props };
+      });
+    },
+    [setEditingCastle_],
+  );
 
   const add = useCallback(
     (latlng: LatLng) => {
-      setEditCastle({
+      setEditingCastle_({
         aka: [],
         name: '',
         latitude: latlng.lat,
@@ -24,37 +37,56 @@ export function useEditCastle() {
         tags: [],
       });
     },
-    [setEditCastle],
+    [setEditingCastle_],
   );
 
   const edit = useCallback(
     (castle: Castle) => {
-      setEditCastle(castle);
-      setEditCastleId(castle.castleId);
+      setEditingCastle_({
+        aka: castle.aka,
+        name: castle.name,
+        latitude: castle.latitude,
+        longitude: castle.longitude,
+        description: castle.description,
+        structures: castle.structures,
+        tags: castle.tags,
+      });
+      setEditingCastleId(castle.castleId);
     },
-    [setEditCastle, setEditCastleId],
+    [setEditingCastle_, setEditingCastleId],
   );
 
   const cancel = useCallback(() => {
-    setEditCastle(undefined);
-  }, [setEditCastle]);
+    setEditingCastle_(undefined);
+  }, [setEditingCastle_]);
 
-  const submit = useCallback(async () => {
-    if (!editCastle) return;
+  const submit = async () => {
+    if (!editingCastle) return;
+    if (isNew) await client.castles.add.mutate(editingCastle);
+    else await client.castles.update.mutate({ ...editingCastle, castleId: editingCastleId });
 
-    await client.castles.add.mutate(editCastle);
-    setEditCastle(undefined);
-    setEditCastleId(undefined);
-  }, [editCastle, setEditCastle, setEditCastleId]);
+    setEditingCastle_(undefined);
+    setEditingCastleId(undefined);
+    refresh();
+  };
+
+  const remove = async () => {
+    if (!editingCastleId) return;
+
+    await client.castles.delete.mutate({ castleId: editingCastleId });
+  };
 
   return {
-    editCastle,
-    editCastleId,
-    setEditCastle,
-    setEditCastleId,
+    isNew,
+    editingCastle,
+    editingCastleId,
+    setEditingCastle,
     add,
     edit,
     submit,
+    remove,
     cancel,
-  };
+  } as const;
 }
+
+export type UseEditCastle = ReturnType<typeof useEditCastle>;

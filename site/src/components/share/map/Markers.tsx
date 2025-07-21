@@ -5,24 +5,22 @@ import { Marker, Popup } from 'react-leaflet';
 import { Edit } from '@/components/icons';
 import styles from './Markers.module.scss';
 import { Castle } from '~api/routes/castles/castles.dto';
-import { useEditCastle } from '@/hooks/useEditCastle';
 import { useAtomValue } from 'jotai';
 import { mapModeAtom } from '@/stores/mapMode';
-import { MARKER_SELECT, MARKERS } from '@/consts/markers';
+import { MARKERS } from '@/consts/markers';
+import { UseEditCastle } from '@/hooks/useEditCastle';
+import { memo } from 'react';
 
-type Props = {
+interface Props {
   data: Castle;
   isEdited: boolean;
-};
+  edit: UseEditCastle['edit'];
+}
 
-export default function Markers({ data }: Props) {
-  const { edit } = useEditCastle();
-  const { editCastleId } = useEditCastle();
+function Markers({ data, edit }: Props) {
   const mode = useAtomValue(mapModeAtom);
-
-  const isSelected = data.castleId === editCastleId;
   const markerIcon = icon({
-    iconUrl: isSelected ? MARKER_SELECT.src : MARKERS[data.scale].src,
+    iconUrl: MARKERS[data.scale - 1].src ?? MARKERS[0].src,
     iconSize: [40, 40],
     iconAnchor: [20, 20],
     popupAnchor: [0, -40],
@@ -35,9 +33,13 @@ export default function Markers({ data }: Props) {
   return (
     <Marker position={[data.latitude, data.longitude]} icon={markerIcon}>
       <Popup className={styles.popup}>
-        <p className={styles.link}>{data.name}</p>
-        {mode === 'edit' && <Edit className={styles.edit} onClick={selectEditMarker} />}
+        <p className={styles.link}>
+          {data.name}
+          {mode === 'edit' && <Edit className={styles.edit} onClick={selectEditMarker} />}
+        </p>
       </Popup>
     </Marker>
   );
 }
+
+export default memo(Markers);
