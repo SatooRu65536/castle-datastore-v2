@@ -245,6 +245,21 @@ export const castlesService = {
    * @returns {number} スケール値 (0~5)
    */
   calcScale: (castle: AddCastle): number => {
-    return 5;
+    if (castle.tags.includes('日本100名城')) return 6;
+
+    if (castle.tags.includes('続日本100名城')) return 5;
+
+    if (castle.tags.includes('特別史跡')) return 4;
+    if (castle.tags.includes('国指定史跡')) return 4;
+
+    if (castle.tags.includes('県指定史跡')) return 3;
+    if (castle.tags.includes('市指定史跡')) return 3;
+    if (castle.tags.includes('区指定史跡')) return 3;
+    if (castle.tags.includes('町指定史跡')) return 3;
+    if (castle.tags.includes('村指定史跡')) return 3;
+
+    if (castle.structures.length > 0) return 2;
+
+    return 1;
   },
 };

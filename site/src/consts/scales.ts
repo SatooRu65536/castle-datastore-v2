@@ -1,4 +1,4 @@
-import { MARKERS } from "./markers";
+import { MARKERS } from './markers';
 
 export const ZOOM_SCALE_MAP: Record<number, number> = {
   7: 5,
@@ -17,13 +17,13 @@ export const ZOOM_SCALE_MAP: Record<number, number> = {
 export const SCALE_MAP = [
   {
     scale: 6,
-    img: MARKERS[4],
-    label: '百名城',
+    img: MARKERS[5],
+    label: '日本100名城',
   },
   {
     scale: 5,
     img: MARKERS[4],
-    label: '続百名城',
+    label: '続日本100名城',
   },
   {
     scale: 4,
@@ -33,7 +33,7 @@ export const SCALE_MAP = [
   {
     scale: 3,
     img: MARKERS[2],
-    label: '市町村指定史跡',
+    label: '地方公共団体指定史跡',
   },
   {
     scale: 2,

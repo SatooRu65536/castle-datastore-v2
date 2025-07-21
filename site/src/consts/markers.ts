@@ -5,9 +5,10 @@ import markerCastleRed from '@/assets/markers/castle-red.png';
 // import markerCastleYellow from '@/assets/markers/castle-yellow.png';
 import markerCastleEdit from '@/assets/markers/castle-edit.png';
 import markerStar from '@/assets/markers/star.png';
+import markerPoint from '@/assets/markers/point.png';
 
 export const MARKERS = [
-  markerStar,
+  markerPoint,
   markerStar,
   markerCastleGreen,
   markerCastleBlue,
